@@ -17,9 +17,14 @@ app.use(session({
   saveUninitialized: false
 }));
 
+app.use((req, res, next) => {
+	req.session.counter = req.session.counter || 0;
+	req.session.counter++;
+	next();
+})
+
 app.use('/api', (req, res, next) => {
-  if (!req.session.counter) req.session.counter = 0;
-  console.log('counter',++req.session.counter);
+  console.log('counter', req.session);
   next();
 });
 
