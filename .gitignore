@@ -28,3 +28,6 @@ Thumbs.db
 # repos / submodules
 .git
 .svn
+
+# secretsssss
+secrets.js
