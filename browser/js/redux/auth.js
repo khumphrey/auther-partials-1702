@@ -51,6 +51,13 @@ export const logout = () => dispatch => {
   .catch(err => console.error('logout unsuccessful', err));
 };
 
+export const retrieveLoggedInUser = () => dispatch => {
+  axios.get('/api/auth/me')
+  .then(resToData)
+  .then(user => dispatch(set(user)))
+  .catch(err => console.error('Problem fetching current user', err));
+};
+
 // a "simple" dispatcher which uses API, changes state, and returns a promise.
 export const login = credentials => dispatch => {
   return axios.put('/api/auth/me', credentials)

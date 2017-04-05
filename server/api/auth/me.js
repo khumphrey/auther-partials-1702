@@ -4,6 +4,14 @@ const router = require('express').Router();
 const User = require('../users/user.model');
 const HttpError = require('../../utils/HttpError');
 
+ 
+// check currently-authenticated user, i.e. "who am I?"
+router.get('/', function (req, res, next) {
+  User.findById(req.session.userId)
+  .then(user => res.json(user))
+  .catch(next);
+});
+
 // login, i.e. "you remember `me`, right?"
 router.put('/', function(req, res, next) {
   const { email, password } = req.body;
