@@ -5,19 +5,21 @@ import { create as createUser } from './users';
 /* ------------------    ACTIONS    --------------------- */
 
 const SET = 'SET_CURRENT_USER';
+const REMOVE = 'REMOVE_CURRENT_USER';
 
 /* --------------    ACTION CREATORS    ----------------- */
 
 const set = user => ({ type: SET, user });
+const remove = () => ({ type: REMOVE });
 
 /* ------------------    REDUCER    --------------------- */
 
 export default function reducer (currentUser = null, action) {
   switch (action.type) {
-
     case SET:
       return action.user;
-
+    case REMOVE:
+    	return null;
     default:
       return currentUser;
   }
@@ -42,6 +44,12 @@ export default function reducer (currentUser = null, action) {
 
 const resToData = res => res.data;
 const navToUserPage = user => browserHistory.push(`/users/${user.id}`);
+
+export const logout = () => dispatch => {
+  axios.delete('/api/auth/me')
+  .then(() => dispatch(remove()))
+  .catch(err => console.error('logout unsuccessful', err));
+};
 
 // a "simple" dispatcher which uses API, changes state, and returns a promise.
 export const login = credentials => dispatch => {

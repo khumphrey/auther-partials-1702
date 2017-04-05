@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
+import { logout as logOutUser } from '../redux/auth';
 
 /* -----------------    COMPONENT     ------------------ */
 
@@ -36,8 +37,7 @@ class Navbar extends React.Component {
                 <Link to="/stories" activeClassName="active">stories</Link>
               </li>
             </ul>
-            { this.renderLogout() }
-            { this.renderLoginSignup() }
+            { this.props.currentUser? this.renderLogout() : this.renderLoginSignup() }
           </div>
         </div>
       </nav>
@@ -58,13 +58,14 @@ class Navbar extends React.Component {
   }
 
   renderLogout() {
+    const name = this.props.currentUser.name || this.props.currentUser.email;
     return (
       <ul className="nav navbar-nav navbar-right">
         <li>
         <button
           className="navbar-btn btn btn-default"
           onClick={this.props.logout}>
-          logout
+          logout {name}
         </button>
         </li>
       </ul>
@@ -74,13 +75,19 @@ class Navbar extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapProps = null;
+const mapStateToProps = ({ currentUser }) => ({ currentUser });
+// // equivalent to:
+// const mapState = state => {
+//   return {
+//     currentUser: state.currentUser
+//   };
+// };
 
 const mapDispatch = dispatch => ({
   logout: () => {
-    console.log('You signed out. Sorta.');
-    browserHistory.push('/');
+    dispatch(logOutUser());
+    browserHistory.push('/'); // comment out to see instant re-render
   }
 });
 
-export default connect(mapProps, mapDispatch)(Navbar);
+export default connect(mapStateToProps, mapDispatch)(Navbar);
