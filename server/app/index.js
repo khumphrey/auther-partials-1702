@@ -17,6 +17,8 @@ app.use(session({
   saveUninitialized: false
 }));
 
+app.use(require('./passport.middleware')); // this has to be AFTER express-session
+
 app.use((req, res, next) => {
 	req.session.counter = req.session.counter || 0;
 	req.session.counter++;
