@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { browserHistory } from 'react-router';
+import { create as createUser } from './users';
 
 /* ------------------    ACTIONS    --------------------- */
 
@@ -40,6 +41,7 @@ export default function reducer (currentUser = null, action) {
  */
 
 const resToData = res => res.data;
+const navToUserPage = user => browserHistory.push(`/users/${user.id}`);
 
 // a "simple" dispatcher which uses API, changes state, and returns a promise.
 export const login = credentials => dispatch => {
@@ -54,6 +56,35 @@ export const login = credentials => dispatch => {
 // a "composed" dispatcher which uses the "simple" one, then routes to a page.
 export const loginAndGoToUser = credentials => dispatch => {
   dispatch(login(credentials))
-  .then(user => browserHistory.push(`/users/${user.id}`))
+  .then(navToUserPage)
   .catch(err => console.error('Problem logging in:', err));
 };
+
+export const signup = credentials => dispatch => {
+  return axios.post('/api/auth/me', credentials)
+  .then(resToData)
+  .then(user => {
+    dispatch(createUser(user)); // so new user appears in our master list
+    dispatch(set(user)); // set current user
+    return user;
+  });
+};
+
+export const signupAndGoToUser = credentials => dispatch => {
+  dispatch(signup(credentials))
+  .then(navToUserPage)
+  .catch(err => console.error('Problem signing up:', err));
+};
+
+// // you could have it all in one as below, but we want to be modular and specific with what each function handles
+// export const signupAndGoToUser = credentials => dispatch => {
+// 	axios.post('/api/auth/me', credentials)
+// 	  .then(resToData)
+// 	  .then(user => {
+// 	    dispatch(createUser(user)); // so new user appears in our master list
+// 	    dispatch(set(user)); // set current user
+// 	    return user;
+// 	  })
+//     .then(navToUserPage)
+// 	  .catch(err => console.error('Problem signing up:', err));
+// };
